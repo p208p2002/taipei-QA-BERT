@@ -1,5 +1,6 @@
 
 from core import AnsDic,QuestionDic
+from transformers import BertTokenizer
 
 def make_ans_dic(answers):
     ansdic = AnsDic(answers)
@@ -38,5 +39,35 @@ if __name__ == "__main__":
     
     ans_dic = make_ans_dic(answers)
     question_dic = make_question_dic(questions)
-    print(question_dic.to_id('104年8月15日施行之道路交通管理處罰條例條文為何?'))
     
+    tokenizer = BertTokenizer(vocab_file='bert-base-chinese-vocab.txt')
+
+    q_tokens = []
+    max_seq_len = 0
+    for q in question_dic.data:
+        bert_ids = tokenizer.build_inputs_with_special_tokens(tokenizer.convert_tokens_to_ids(tokenizer.tokenize(q)))
+        if(len(bert_ids)>max_seq_len):
+            max_seq_len = len(bert_ids)
+        q_tokens.append(bert_ids)
+        # print(tokenizer.convert_ids_to_tokens(tokenizer.build_inputs_with_special_tokens(tokenizer.convert_tokens_to_ids(tokenizer.tokenize(q)))))
+    
+    print("最長問句長度:",max_seq_len)
+    assert max_seq_len <= 512 # 小於BERT-base長度限制
+
+    # 補齊長度
+    for q in q_tokens:
+        while len(q)<max_seq_len:
+            q.append(0)
+    
+    a_labels = []
+    for a in ans_dic.data:
+        a_labels.append(ans_dic.to_id(a))
+        # print (ans_dic.to_id(a))
+    
+    # BERT input embedding
+    input_ids = q_tokens
+    input_masks = [[1]*max_seq_len for i in range(len(question_dic))]
+    input_segment_ids = [[0]*max_seq_len for i in range(len(question_dic))]
+    assert len(input_ids) == len(question_dic) and len(input_ids) == len(input_masks) and len(input_ids) == len(input_segment_ids)
+
+   

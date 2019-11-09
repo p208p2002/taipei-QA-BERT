@@ -23,6 +23,10 @@ class AnsDic(object):
     @property
     def types(self):
         return self.answers_types
+    
+    @property
+    def data(self):
+        return self.answers
 
     def __len__(self):
         return len(self.answers)
