@@ -19,7 +19,7 @@ def make_question_dic(quetsions):
     return QuestionDic(quetsions)
     
 
-if __name__ == "__main__":
+def convert_question_to_feature():
     with open('Taipei_QA_new.txt','r',encoding='utf-8') as f:
         data = f.read()
     qa_pairs = data.split("\n")
@@ -69,5 +69,8 @@ if __name__ == "__main__":
     input_masks = [[1]*max_seq_len for i in range(len(question_dic))]
     input_segment_ids = [[0]*max_seq_len for i in range(len(question_dic))]
     assert len(input_ids) == len(question_dic) and len(input_ids) == len(input_masks) and len(input_ids) == len(input_segment_ids)
+
+if __name__ == "__main__":
+    convert_question_to_feature()
 
    
