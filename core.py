@@ -1,3 +1,14 @@
+import torch
+from torch.utils.data import TensorDataset
+
+def makeDataset(input_ids, input_masks, input_segment_ids, answer_lables):
+    all_input_ids = torch.tensor([input_id for input_id in input_ids], dtype=torch.long)
+    all_input_masks = torch.tensor([input_mask for input_mask in input_masks], dtype=torch.long)
+    all_input_segment_ids = torch.tensor([input_segment_id for input_segment_id in input_segment_ids], dtype=torch.long)
+    all_answer_lables = torch.tensor([answer_lable for answer_lable in answer_lables], dtype=torch.long)
+    return TensorDataset(all_input_ids, all_input_masks, all_input_segment_ids, all_input_ids)
+    
+
 class AnsDic(object):
     def __init__(self, answers):
         self.answers = answers #全部答案(含重複)
