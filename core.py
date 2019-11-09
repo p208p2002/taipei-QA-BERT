@@ -6,7 +6,7 @@ def makeDataset(input_ids, input_masks, input_segment_ids, answer_lables):
     all_input_masks = torch.tensor([input_mask for input_mask in input_masks], dtype=torch.long)
     all_input_segment_ids = torch.tensor([input_segment_id for input_segment_id in input_segment_ids], dtype=torch.long)
     all_answer_lables = torch.tensor([answer_lable for answer_lable in answer_lables], dtype=torch.long)
-    return TensorDataset(all_input_ids, all_input_masks, all_input_segment_ids, all_input_ids)
+    return TensorDataset(all_input_ids, all_input_masks, all_input_segment_ids, all_answer_lables)
     
 
 class AnsDic(object):
@@ -19,7 +19,8 @@ class AnsDic(object):
     
     def _make_dic(self):
         for index_a,a in enumerate(self.answers_norepeat):
-            self.ans_list.append((index_a,a))
+            if a != None:
+                self.ans_list.append((index_a,a))
 
     def to_id(self,text):
         for ans_id,ans_text in self.ans_list:
