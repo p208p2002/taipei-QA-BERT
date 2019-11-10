@@ -39,8 +39,7 @@ if __name__ == "__main__":
     # scheduler = WarmupLinearSchedule(optimizer, warmup_steps=args.warmup_steps, t_total=t_total)
 
     model.zero_grad()
-    for epoch in range(5):
-        
+    for epoch in range(30):
         running_loss_val = 0.0
         running_acc = 0.0
         for batch_index, batch_dict in enumerate(train_dataloader):
@@ -90,5 +89,8 @@ if __name__ == "__main__":
 
             # log
             print("epoch:%2d batch:%4d test_loss:%2.4f test_acc:%3.4f"%(epoch+1, batch_index+1, running_loss_val, running_acc))
+    
+    model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
+    model_to_save.save_pretrained('trained_model')
 
     
