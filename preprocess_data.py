@@ -73,10 +73,10 @@ def convert_data_to_feature():
     return {'input_ids':input_ids,
     'input_masks':input_masks,
     'input_segment_ids':input_segment_ids,
-    'answer_lables':answer_lables}
+    'answer_lables':answer_lables,
+    'question_dic':question_dic,
+    'answer_dic':ans_dic}
 
 
 if __name__ == "__main__":
-    convert_data_to_feature()
-
-   
+    feature = convert_data_to_feature()
