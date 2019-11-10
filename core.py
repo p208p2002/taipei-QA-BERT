@@ -6,7 +6,15 @@ def makeDataset(input_ids, input_masks, input_segment_ids, answer_lables):
     all_input_masks = torch.tensor([input_mask for input_mask in input_masks], dtype=torch.long)
     all_input_segment_ids = torch.tensor([input_segment_id for input_segment_id in input_segment_ids], dtype=torch.long)
     all_answer_lables = torch.tensor([answer_lable for answer_lable in answer_lables], dtype=torch.long)
-    return TensorDataset(all_input_ids, all_input_masks, all_input_segment_ids, all_answer_lables)
+    
+    full_dataset = TensorDataset(all_input_ids, all_input_masks, all_input_segment_ids, all_answer_lables)
+    
+    # 切分訓練與測試資料集
+    train_size = int(0.8 * len(full_dataset))
+    test_size = len(full_dataset) - train_size
+    train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, test_size])
+
+    return train_dataset,test_dataset
     
 
 class AnsDic(object):
