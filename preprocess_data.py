@@ -1,6 +1,7 @@
 
 from core import AnsDic,QuestionDic
 from transformers import BertTokenizer
+import pickle
 
 def make_ans_dic(answers):
     ansdic = AnsDic(answers)
@@ -70,12 +71,17 @@ def convert_data_to_feature():
     input_masks = [[1]*max_seq_len for i in range(len(question_dic))]
     input_segment_ids = [[0]*max_seq_len for i in range(len(question_dic))]
     assert len(input_ids) == len(question_dic) and len(input_ids) == len(input_masks) and len(input_ids) == len(input_segment_ids)
-    return {'input_ids':input_ids,
-    'input_masks':input_masks,
-    'input_segment_ids':input_segment_ids,
-    'answer_lables':answer_lables,
-    'question_dic':question_dic,
-    'answer_dic':ans_dic}
+
+    data_features = {'input_ids':input_ids,
+                    'input_masks':input_masks,
+                    'input_segment_ids':input_segment_ids,
+                    'answer_lables':answer_lables,
+                    'question_dic':question_dic,
+                    'answer_dic':ans_dic}
+    
+    output = open('trained_model/data_features.pkl', 'wb')
+    pickle.dump(data_features,output)
+    return data_features
 
 
 if __name__ == "__main__":
