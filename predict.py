@@ -26,7 +26,7 @@ if __name__ == "__main__":
     predicts = outputs[:2]
     predicts = predicts[0]
     max_val = torch.max(predicts)
-    label = (predicts == max_val).nonzero().numpy()[0][0]
+    label = (predicts == max_val).nonzero().numpy()[0][1]
     ans_label = answer_dic.to_text(label)
     
     print(q_input)
