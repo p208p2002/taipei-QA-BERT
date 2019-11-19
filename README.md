@@ -4,6 +4,7 @@
 ## 檔案說明
 - train.py : 模型訓練(BERT fine-tune)
 - predict.py : 提問預測
+- [taipei-qa-bert.pdf](https://github.com/p208p2002/taipei-QA-BERT/blob/master/taipei-qa-bert.pdf):PDF說明文擋
 
 ## 環境需求
 - python 3.6+
