@@ -3,9 +3,6 @@ import torch
 import pickle
 from transformers import BertConfig, BertForSequenceClassification, BertTokenizer, AdamW
 
-def toBertIds(q_input):
-    return tokenizer.build_inputs_with_special_tokens(tokenizer.convert_tokens_to_ids(tokenizer.tokenize(q_input)))
-
 if __name__ == "__main__":
     # load and init
     tokenizer = BertTokenizer(vocab_file='bert-base-chinese-vocab.txt')
@@ -21,7 +18,7 @@ if __name__ == "__main__":
     #
     q_inputs = ['為何路邊停車格有編號的要收費，無編號的不用收費','債權人可否向稅捐稽徵處申請查調債務人之財產、所得資料','想做大腸癌篩檢，不知如何辨理']
     for q_input in q_inputs:
-        bert_ids = toBertIds(q_input)
+        bert_ids = toBertIds(tokenizer,q_input)
         assert len(bert_ids) <= 512
         input_ids = torch.LongTensor(bert_ids).unsqueeze(0)
 
