@@ -20,8 +20,8 @@ def make_question_dic(quetsions):
     return QuestionDic(quetsions)
     
 
-def convert_data_to_feature():
-    with open('Taipei_QA_new.txt','r',encoding='utf-8') as f:
+def convert_data_to_feature(train_data_path):
+    with open(train_data_path,'r',encoding='utf-8') as f:
         data = f.read()
     qa_pairs = data.split("\n")
 
@@ -85,4 +85,4 @@ def convert_data_to_feature():
 
 
 if __name__ == "__main__":
-    feature = convert_data_to_feature()
+    feature = convert_data_to_feature('Taipei_QA_new.txt')

@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # setting device
     device = torch.device('cuda')
 
-    data_feature = convert_data_to_feature()
+    data_feature = convert_data_to_feature('Taipei_QA_new.txt')
     input_ids = data_feature['input_ids']
     input_masks = data_feature['input_masks']
     input_segment_ids = data_feature['input_segment_ids']
