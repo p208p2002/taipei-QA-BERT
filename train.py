@@ -1,12 +1,7 @@
-from core import convert_data_to_feature,makeDataset
+from core import convert_data_to_feature, makeDataset, compute_accuracy
 from torch.utils.data import DataLoader
 from transformers import BertConfig, BertForSequenceClassification, BertTokenizer, AdamW
 import torch
-
-def compute_accuracy(y_pred, y_target):
-    _, y_pred_indices = y_pred.max(dim=1)
-    n_correct = torch.eq(y_pred_indices, y_target).sum().item()
-    return n_correct / len(y_pred_indices) * 100
 
 if __name__ == "__main__":
     bert_config, bert_class, bert_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)

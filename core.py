@@ -3,6 +3,11 @@ from torch.utils.data import TensorDataset
 from transformers import BertTokenizer
 import pickle
 
+def compute_accuracy(y_pred, y_target):
+    _, y_pred_indices = y_pred.max(dim=1)
+    n_correct = torch.eq(y_pred_indices, y_target).sum().item()
+    return n_correct / len(y_pred_indices) * 100
+
 def toBertIds(tokenizer,q_input):
     return tokenizer.build_inputs_with_special_tokens(tokenizer.convert_tokens_to_ids(tokenizer.tokenize(q_input)))
 
