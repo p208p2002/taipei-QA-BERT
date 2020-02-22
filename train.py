@@ -1,5 +1,4 @@
-from preprocess_data import convert_data_to_feature
-from core import makeDataset
+from core import convert_data_to_feature,makeDataset
 from torch.utils.data import DataLoader
 from transformers import BertConfig, BertForSequenceClassification, BertTokenizer, AdamW
 import torch
@@ -13,6 +12,7 @@ if __name__ == "__main__":
     bert_config, bert_class, bert_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
     
     # setting device
+    # device = torch.device('cpu')
     device = torch.device('cuda')
 
     data_feature = convert_data_to_feature('Taipei_QA_new.txt')
