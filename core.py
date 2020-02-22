@@ -19,7 +19,7 @@ def makeDataset(input_ids, input_masks, input_segment_ids, answer_lables):
     return train_dataset,test_dataset
     
 
-class AnsDic(object):
+class DataDic(object):
     def __init__(self, answers):
         self.answers = answers #全部答案(含重複)
         self.answers_norepeat = sorted(list(set(answers))) # 不重複
@@ -53,12 +53,6 @@ class AnsDic(object):
     def __len__(self):
         return len(self.answers)
 
-class QuestionDic(AnsDic):
-    def __init__(self,questions):
-        super().__init__(answers = questions)
-
-
-
 def convert_data_to_feature(train_data_path):
     with open(train_data_path,'r',encoding='utf-8') as f:
         data = f.read()
@@ -77,8 +71,8 @@ def convert_data_to_feature(train_data_path):
     
     assert len(answers) == len(questions)
     
-    ans_dic = AnsDic(answers)
-    question_dic = QuestionDic(questions)
+    ans_dic = DataDic(answers)
+    question_dic = DataDic(questions)
     
     tokenizer = BertTokenizer(vocab_file='bert-base-chinese-vocab.txt')
 
