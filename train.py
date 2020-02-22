@@ -11,9 +11,8 @@ def compute_accuracy(y_pred, y_target):
 if __name__ == "__main__":
     bert_config, bert_class, bert_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
     
-    # setting device
-    # device = torch.device('cpu')
-    device = torch.device('cuda')
+    # setting device    
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     data_feature = convert_data_to_feature('Taipei_QA_new.txt')
     input_ids = data_feature['input_ids']
