@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # scheduler = WarmupLinearSchedule(optimizer, warmup_steps=args.warmup_steps, t_total=t_total)
 
     model.zero_grad()
-    for epoch in range(30):
+    for epoch in range(60):
         running_loss_val = 0.0
         running_acc = 0.0
         for batch_index, batch_dict in enumerate(train_dataloader):
