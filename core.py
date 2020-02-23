@@ -3,6 +3,7 @@ from torch.utils.data import TensorDataset
 import pickle
 
 def use_model(model_name, config_file_path, model_file_path, vocab_file_path, num_labels):
+    # 選擇模型並加載設定
     if(model_name == 'bert'):
         from transformers import BertConfig, BertForSequenceClassification, BertTokenizer
         model_config, model_class, model_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
@@ -19,26 +20,26 @@ def use_model(model_name, config_file_path, model_file_path, vocab_file_path, nu
         return model, tokenizer
 
 def compute_accuracy(y_pred, y_target):
+    # 計算正確率
     _, y_pred_indices = y_pred.max(dim=1)
     n_correct = torch.eq(y_pred_indices, y_target).sum().item()
     return n_correct / len(y_pred_indices) * 100
 
 def to_bert_ids(tokenizer,q_input):
+    # 將文字輸入轉換成對應的id編號
     return tokenizer.build_inputs_with_special_tokens(tokenizer.convert_tokens_to_ids(tokenizer.tokenize(q_input)))
 
 def make_dataset(input_ids, input_masks, input_segment_ids, answer_lables):
     all_input_ids = torch.tensor([input_id for input_id in input_ids], dtype=torch.long)
     all_input_masks = torch.tensor([input_mask for input_mask in input_masks], dtype=torch.long)
     all_input_segment_ids = torch.tensor([input_segment_id for input_segment_id in input_segment_ids], dtype=torch.long)
-    all_answer_lables = torch.tensor([answer_lable for answer_lable in answer_lables], dtype=torch.long)
-    
-    full_dataset = TensorDataset(all_input_ids, all_input_masks, all_input_segment_ids, all_answer_lables)
-    
-    # 切分訓練與測試資料集
-    train_size = int(0.8 * len(full_dataset))
+    all_answer_lables = torch.tensor([answer_lable for answer_lable in answer_lables], dtype=torch.long)    
+    return TensorDataset(all_input_ids, all_input_masks, all_input_segment_ids, all_answer_lables)
+
+def split_dataset(full_dataset, split_rate=0.8):  
+    train_size = int(split_rate * len(full_dataset))
     test_size = len(full_dataset) - train_size
     train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, test_size])
-
     return train_dataset,test_dataset
     
 
@@ -136,5 +137,3 @@ def convert_data_to_feature(tokenizer, train_data_path):
     output = open('trained_model/data_features.pkl', 'wb')
     pickle.dump(data_features,output)
     return data_features
-
-

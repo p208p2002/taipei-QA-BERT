@@ -1,4 +1,4 @@
-from core import convert_data_to_feature, make_dataset, compute_accuracy, use_model
+from core import convert_data_to_feature, make_dataset, split_dataset, compute_accuracy, use_model
 from torch.utils.data import DataLoader
 import torch
 from transformers import AdamW
@@ -38,7 +38,8 @@ if __name__ == "__main__":
     answer_lables = data_feature['answer_lables']
     
     #
-    train_dataset, test_dataset = make_dataset(input_ids = input_ids, input_masks = input_masks, input_segment_ids = input_segment_ids, answer_lables = answer_lables)
+    full_dataset = make_dataset(input_ids = input_ids, input_masks = input_masks, input_segment_ids = input_segment_ids, answer_lables = answer_lables)
+    train_dataset, test_dataset = split_dataset(full_dataset, 0.9)
     train_dataloader = DataLoader(train_dataset,batch_size=16,shuffle=True)
     test_dataloader = DataLoader(test_dataset,batch_size=16,shuffle=True)    
 
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     # scheduler = WarmupLinearSchedule(optimizer, warmup_steps=args.warmup_steps, t_total=t_total)
 
     model.zero_grad()
-    for epoch in range(1):
+    for epoch in range(30):
         running_loss_val = 0.0
         running_acc = 0.0
         for batch_index, batch_dict in enumerate(train_dataloader):
@@ -105,5 +106,3 @@ if __name__ == "__main__":
     
     model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
     model_to_save.save_pretrained('trained_model')
-
-    
