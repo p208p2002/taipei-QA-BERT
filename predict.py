@@ -1,18 +1,27 @@
-from transformers import BertTokenizer
 import torch
 import pickle
-from transformers import BertConfig, BertForSequenceClassification, BertTokenizer, AdamW
+from core import toBertIds
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     # load and init
-    tokenizer = BertTokenizer(vocab_file='bert-base-chinese-vocab.txt')
     pkl_file = open('trained_model/data_features.pkl', 'rb')
     data_features = pickle.load(pkl_file)
     answer_dic = data_features['answer_dic']
+        
+    # BERT
+    # from transformers import BertConfig, BertForSequenceClassification, BertTokenizer, AdamW
+    # model_config, model_class, model_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
+    # config = model_config.from_pretrained('trained_model/config.json')
+    # model = model_class.from_pretrained('trained_model/pytorch_model.bin', from_tf=bool('.ckpt' in 'bert-base-chinese'), config=config)
+    # tokenizer = model_tokenizer(vocab_file='bert-base-chinese-vocab.txt')
     
-    bert_config, bert_class, bert_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
-    config = bert_config.from_pretrained('trained_model/config.json')
-    model = bert_class.from_pretrained('trained_model/pytorch_model.bin', from_tf=bool('.ckpt' in 'bert-base-chinese'), config=config)
+    # ALBERT
+    from transformers import AdamW
+    from albert.albert_zh import AlbertConfig, AlbertTokenizer, AlbertForSequenceClassification 
+    model_config, model_class, model_tokenizer = (AlbertConfig, AlbertForSequenceClassification, AlbertTokenizer)
+    config = model_config.from_pretrained('trained_model/config.json')
+    model = model_class.from_pretrained('trained_model/pytorch_model.bin', config=config)
+    tokenizer = model_tokenizer.from_pretrained('albert/albert_tiny/vocab.txt')
     model.eval()
 
     #

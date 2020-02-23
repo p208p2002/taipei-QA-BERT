@@ -1,27 +1,39 @@
 from core import convert_data_to_feature, makeDataset, compute_accuracy
 from torch.utils.data import DataLoader
-from transformers import BertConfig, BertForSequenceClassification, BertTokenizer, AdamW
 import torch
 
-if __name__ == "__main__":
-    bert_config, bert_class, bert_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
+if __name__ == "__main__":    
+    # BERT
+    # from transformers import BertConfig, BertForSequenceClassification, BertTokenizer, AdamW
+    # model_config, model_class, model_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
+    # config = model_config.from_pretrained('bert-base-chinese')
+    # model = model_class.from_pretrained('bert-base-chinese', from_tf=bool('.ckpt' in 'bert-base-chinese'), config=config)
+    # tokenizer = model_tokenizer(vocab_file='bert-base-chinese-vocab.txt')
+
+    # ALBERT
+    from transformers import AdamW
+    from albert.albert_zh import AlbertConfig, AlbertTokenizer, AlbertForSequenceClassification
+    model_config, model_class, model_tokenizer = (AlbertConfig, AlbertForSequenceClassification, AlbertTokenizer)
+    config = model_config.from_pretrained('albert/albert_tiny/config.json',num_labels = 149)
+    model = model_class.from_pretrained('albert/albert_tiny', config=config)
+    tokenizer = model_tokenizer.from_pretrained('albert/albert_tiny/vocab.txt')
     
     # setting device    
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    print("using device",device)
+    model.to(device)
 
-    data_feature = convert_data_to_feature('Taipei_QA_new.txt')
+    #    
+    data_feature = convert_data_to_feature(tokenizer,'Taipei_QA_new.txt')
     input_ids = data_feature['input_ids']
     input_masks = data_feature['input_masks']
     input_segment_ids = data_feature['input_segment_ids']
     answer_lables = data_feature['answer_lables']
     
+    #
     train_dataset, test_dataset = makeDataset(input_ids = input_ids, input_masks = input_masks, input_segment_ids = input_segment_ids, answer_lables = answer_lables)
     train_dataloader = DataLoader(train_dataset,batch_size=16,shuffle=True)
-    test_dataloader = DataLoader(test_dataset,batch_size=16,shuffle=True)
-
-    config = bert_config.from_pretrained('bert-base-chinese',num_labels = 149)
-    model = bert_class.from_pretrained('bert-base-chinese', from_tf=bool('.ckpt' in 'bert-base-chinese'), config=config)
-    model.to(device)
+    test_dataloader = DataLoader(test_dataset,batch_size=16,shuffle=True)    
 
     # Prepare optimizer and schedule (linear warmup and decay)
     no_decay = ['bias', 'LayerNorm.weight']

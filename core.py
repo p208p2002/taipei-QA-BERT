@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import TensorDataset
-from transformers import BertTokenizer
 import pickle
 
 def compute_accuracy(y_pred, y_target):
@@ -61,7 +60,7 @@ class DataDic(object):
     def __len__(self):
         return len(self.answers)
 
-def convert_data_to_feature(train_data_path):
+def convert_data_to_feature(tokenizer, train_data_path):
     with open(train_data_path,'r',encoding='utf-8') as f:
         data = f.read()
     qa_pairs = data.split("\n")
@@ -81,8 +80,6 @@ def convert_data_to_feature(train_data_path):
     
     ans_dic = DataDic(answers)
     question_dic = DataDic(questions)
-    
-    tokenizer = BertTokenizer(vocab_file='bert-base-chinese-vocab.txt')
 
     q_tokens = []
     max_seq_len = 0
