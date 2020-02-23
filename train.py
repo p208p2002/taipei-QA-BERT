@@ -1,22 +1,29 @@
-from core import convert_data_to_feature, makeDataset, compute_accuracy
+from core import convert_data_to_feature, make_dataset, compute_accuracy, use_model
 from torch.utils.data import DataLoader
 import torch
+from transformers import AdamW
 
 if __name__ == "__main__":    
     # BERT
-    # from transformers import BertConfig, BertForSequenceClassification, BertTokenizer, AdamW
-    # model_config, model_class, model_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
-    # config = model_config.from_pretrained('bert-base-chinese')
-    # model = model_class.from_pretrained('bert-base-chinese', from_tf=bool('.ckpt' in 'bert-base-chinese'), config=config)
-    # tokenizer = model_tokenizer(vocab_file='bert-base-chinese-vocab.txt')
+    model_setting = {
+        "model_name":"bert", 
+        "config_file_path":"bert-base-chinese", 
+        "model_file_path":"bert-base-chinese", 
+        "vocab_file_path":"bert-base-chinese-vocab.txt",
+        "num_labels":149  # 分幾類 
+    }    
 
     # ALBERT
-    from transformers import AdamW
-    from albert.albert_zh import AlbertConfig, AlbertTokenizer, AlbertForSequenceClassification
-    model_config, model_class, model_tokenizer = (AlbertConfig, AlbertForSequenceClassification, AlbertTokenizer)
-    config = model_config.from_pretrained('albert/albert_tiny/config.json',num_labels = 149)
-    model = model_class.from_pretrained('albert/albert_tiny', config=config)
-    tokenizer = model_tokenizer.from_pretrained('albert/albert_tiny/vocab.txt')
+    # model_setting = {
+    #     "model_name":"albert", 
+    #     "config_file_path":"albert/albert_tiny/config.json", 
+    #     "model_file_path":"albert/albert_tiny/pytorch_model.bin", 
+    #     "vocab_file_path":"albert/albert_tiny/vocab.txt",
+    #     "num_labels":149 # 分幾類
+    # }    
+
+    #
+    model, tokenizer = use_model(**model_setting)
     
     # setting device    
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -31,7 +38,7 @@ if __name__ == "__main__":
     answer_lables = data_feature['answer_lables']
     
     #
-    train_dataset, test_dataset = makeDataset(input_ids = input_ids, input_masks = input_masks, input_segment_ids = input_segment_ids, answer_lables = answer_lables)
+    train_dataset, test_dataset = make_dataset(input_ids = input_ids, input_masks = input_masks, input_segment_ids = input_segment_ids, answer_lables = answer_lables)
     train_dataloader = DataLoader(train_dataset,batch_size=16,shuffle=True)
     test_dataloader = DataLoader(test_dataset,batch_size=16,shuffle=True)    
 
@@ -45,7 +52,7 @@ if __name__ == "__main__":
     # scheduler = WarmupLinearSchedule(optimizer, warmup_steps=args.warmup_steps, t_total=t_total)
 
     model.zero_grad()
-    for epoch in range(60):
+    for epoch in range(1):
         running_loss_val = 0.0
         running_acc = 0.0
         for batch_index, batch_dict in enumerate(train_dataloader):

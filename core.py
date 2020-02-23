@@ -2,15 +2,31 @@ import torch
 from torch.utils.data import TensorDataset
 import pickle
 
+def use_model(model_name, config_file_path, model_file_path, vocab_file_path, num_labels):
+    if(model_name == 'bert'):
+        from transformers import BertConfig, BertForSequenceClassification, BertTokenizer
+        model_config, model_class, model_tokenizer = (BertConfig, BertForSequenceClassification, BertTokenizer)
+        config = model_config.from_pretrained(config_file_path,num_labels = num_labels)
+        model = model_class.from_pretrained(model_file_path, from_tf=bool('.ckpt' in 'bert-base-chinese'), config=config)
+        tokenizer = model_tokenizer(vocab_file=vocab_file_path)
+        return model, tokenizer
+    elif(model_name == 'albert'):
+        from albert.albert_zh import AlbertConfig, AlbertTokenizer, AlbertForSequenceClassification
+        model_config, model_class, model_tokenizer = (AlbertConfig, AlbertForSequenceClassification, AlbertTokenizer)
+        config = model_config.from_pretrained(config_file_path,num_labels = num_labels)
+        model = model_class.from_pretrained(model_file_path, config=config)
+        tokenizer = model_tokenizer.from_pretrained(vocab_file_path)
+        return model, tokenizer
+
 def compute_accuracy(y_pred, y_target):
     _, y_pred_indices = y_pred.max(dim=1)
     n_correct = torch.eq(y_pred_indices, y_target).sum().item()
     return n_correct / len(y_pred_indices) * 100
 
-def toBertIds(tokenizer,q_input):
+def to_bert_ids(tokenizer,q_input):
     return tokenizer.build_inputs_with_special_tokens(tokenizer.convert_tokens_to_ids(tokenizer.tokenize(q_input)))
 
-def makeDataset(input_ids, input_masks, input_segment_ids, answer_lables):
+def make_dataset(input_ids, input_masks, input_segment_ids, answer_lables):
     all_input_ids = torch.tensor([input_id for input_id in input_ids], dtype=torch.long)
     all_input_masks = torch.tensor([input_mask for input_mask in input_masks], dtype=torch.long)
     all_input_segment_ids = torch.tensor([input_segment_id for input_segment_id in input_segment_ids], dtype=torch.long)
@@ -84,7 +100,7 @@ def convert_data_to_feature(tokenizer, train_data_path):
     q_tokens = []
     max_seq_len = 0
     for q in question_dic.data:
-        bert_ids = toBertIds(tokenizer,q)
+        bert_ids = to_bert_ids(tokenizer,q)
         if(len(bert_ids)>max_seq_len):
             max_seq_len = len(bert_ids)
         q_tokens.append(bert_ids)
