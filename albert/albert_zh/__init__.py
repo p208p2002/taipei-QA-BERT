@@ -1,0 +1,3 @@
+from .modeling_albert import AlbertModel,AlbertForMaskedLM,AlbertForQuestionAnswering,AlbertForSequenceClassification
+from .configuration_bert import BertConfig as AlbertConfig
+from .tokenization_bert import BertTokenizer as AlbertTokenizer
