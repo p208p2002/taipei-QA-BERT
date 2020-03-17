@@ -4,7 +4,7 @@
 ## 檔案說明
 - train.py : 模型訓練(BERT fine-tune)
 - predict.py : 提問預測
-- ~[tutorial](https://github.com/p208p2002/taipei-QA-BERT/tree/master/tutorial) : 投影片檔案~
+- [tutorial](https://github.com/p208p2002/taipei-QA-BERT/tree/master/tutorial) : 投影片檔案
 
 ## 中文Albert
 - 預設使用bert-base-chinese
