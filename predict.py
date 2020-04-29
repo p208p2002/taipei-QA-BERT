@@ -8,7 +8,7 @@ if __name__ == "__main__":
     data_features = pickle.load(pkl_file)
     answer_dic = data_features['answer_dic']
         
-    # BERT
+    BERT
     model_setting = {
         "model_name":"bert", 
         "config_file_path":"trained_model/config.json", 
@@ -17,7 +17,7 @@ if __name__ == "__main__":
         "num_labels":149  # 分幾類 
     }    
 
-    # ALBERT
+    # # ALBERT
     # model_setting = {
     #     "model_name":"albert", 
     #     "config_file_path":"trained_model/config.json", 

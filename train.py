@@ -13,7 +13,7 @@ if __name__ == "__main__":
         "num_labels":149  # 分幾類 
     }    
 
-    # ALBERT
+    # # ALBERT
     # model_setting = {
     #     "model_name":"albert", 
     #     "config_file_path":"albert/albert_tiny/config.json", 
@@ -27,6 +27,8 @@ if __name__ == "__main__":
     
     # setting device    
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    if(device =='cuda' and device,torch.cuda.device_count()>1):
+        model = torch.nn.DataParallel(model,device_ids=[0,1])
     print("using device",device)
     model.to(device)
 
@@ -40,8 +42,8 @@ if __name__ == "__main__":
     #
     full_dataset = make_dataset(input_ids = input_ids, input_masks = input_masks, input_segment_ids = input_segment_ids, answer_lables = answer_lables)
     train_dataset, test_dataset = split_dataset(full_dataset, 0.9)
-    train_dataloader = DataLoader(train_dataset,batch_size=16,shuffle=True)
-    test_dataloader = DataLoader(test_dataset,batch_size=16,shuffle=True)    
+    train_dataloader = DataLoader(train_dataset,batch_size=24,shuffle=True)
+    test_dataloader = DataLoader(test_dataset,batch_size=8,shuffle=True)    
 
     # Prepare optimizer and schedule (linear warmup and decay)
     no_decay = ['bias', 'LayerNorm.weight']
@@ -59,13 +61,17 @@ if __name__ == "__main__":
         for batch_index, batch_dict in enumerate(train_dataloader):
             model.train()
             batch_dict = tuple(t.to(device) for t in batch_dict)
+            # batch_dict = tuple(t.to('cuda:1') for t in batch_dict)
             outputs = model(
                 batch_dict[0],
                 # attention_mask=batch_dict[1],
                 labels = batch_dict[3]
                 )
             loss,logits = outputs[:2]
-            loss.sum().backward()
+            if(device =='cuda' and device,torch.cuda.device_count()>1):
+                loss = loss.mean()
+
+            loss.backward()
             optimizer.step()
             # scheduler.step()  # Update learning rate schedule
             model.zero_grad()
@@ -92,6 +98,8 @@ if __name__ == "__main__":
                 labels = batch_dict[3]
                 )
             loss,logits = outputs[:2]
+            if(device =='cuda' and device,torch.cuda.device_count()>1):
+                loss = loss.mean()
             
             # compute the loss
             loss_t = loss.item()
