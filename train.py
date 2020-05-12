@@ -27,7 +27,7 @@ if __name__ == "__main__":
     
     # setting device    
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    if(device =='cuda' and device,torch.cuda.device_count()>1):
+    if(device =='cuda' and torch.cuda.device_count()>1):
         model = torch.nn.DataParallel(model,device_ids=[0,1])
     print("using device",device)
     model.to(device)
