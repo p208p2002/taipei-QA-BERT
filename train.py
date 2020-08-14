@@ -1,6 +1,7 @@
 from core import convert_data_to_feature, make_dataset, split_dataset, compute_accuracy, use_model
 from torch.utils.data import DataLoader
 import torch
+import torch.nn as nn
 from transformers import AdamW
 
 if __name__ == "__main__":    
@@ -27,8 +28,8 @@ if __name__ == "__main__":
     
     # setting device    
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    if(device =='cuda' and torch.cuda.device_count()>1):
-        model = torch.nn.DataParallel(model,device_ids=[0,1])
+    if torch.cuda.device_count() >1:
+        model = nn.DataParallel(model,device_ids=[0,1])
     print("using device",device)
     model.to(device)
 
@@ -68,7 +69,7 @@ if __name__ == "__main__":
                 labels = batch_dict[3]
                 )
             loss,logits = outputs[:2]
-            if(device =='cuda' and device,torch.cuda.device_count()>1):
+            if torch.cuda.device_count() >1:
                 loss = loss.mean()
 
             loss.backward()
@@ -98,7 +99,7 @@ if __name__ == "__main__":
                 labels = batch_dict[3]
                 )
             loss,logits = outputs[:2]
-            if(device =='cuda' and device,torch.cuda.device_count()>1):
+            if torch.cuda.device_count() >1:
                 loss = loss.mean()
             
             # compute the loss
