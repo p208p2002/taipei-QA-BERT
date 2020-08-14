@@ -5,22 +5,22 @@ from transformers import AdamW
 
 if __name__ == "__main__":    
     # BERT
-    model_setting = {
-        "model_name":"bert", 
-        "config_file_path":"bert-base-chinese", 
-        "model_file_path":"bert-base-chinese", 
-        "vocab_file_path":"bert-base-chinese-vocab.txt",
-        "num_labels":149  # 分幾類 
-    }    
-
-    # # ALBERT
     # model_setting = {
-    #     "model_name":"albert", 
-    #     "config_file_path":"albert/albert_tiny/config.json", 
-    #     "model_file_path":"albert/albert_tiny/pytorch_model.bin", 
-    #     "vocab_file_path":"albert/albert_tiny/vocab.txt",
-    #     "num_labels":149 # 分幾類
+    #     "model_name":"bert", 
+    #     "config_file_path":"bert-base-chinese", 
+    #     "model_file_path":"bert-base-chinese", 
+    #     "vocab_file_path":"bert-base-chinese-vocab.txt",
+    #     "num_labels":149  # 分幾類 
     # }    
+
+    # ALBERT
+    model_setting = {
+        "model_name":"albert", 
+        "config_file_path":"albert/albert_tiny/config.json", 
+        "model_file_path":"albert/albert_tiny/pytorch_model.bin", 
+        "vocab_file_path":"albert/albert_tiny/vocab.txt",
+        "num_labels":149 # 分幾類
+    }    
 
     #
     model, tokenizer = use_model(**model_setting)
